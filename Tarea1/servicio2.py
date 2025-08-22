@@ -2,19 +2,17 @@ import socket
 
 from global_functions  import *
 
-# Configurar el host y puerto TCP
+# Configurar el host y puertos
 host = "127.0.0.1"
-TCP_PORT = 5000
+PORT_1_2 = 5000
+PORT_2_3 = 5005
 
 flag=True
-
-UDP_IP = "127.0.0.1"
-UDP_PORT = 5005
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((host, TCP_PORT))
+    s.bind((host, PORT_1_2))
 
     #Escuchar conexiones: permitir conexiones entrantes
     s.listen()
@@ -34,16 +32,19 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
                 datos+=data
 
-                if datos.decode() != "935":
+                # Lógica de Finalización
+                partes = datos.decode().split("-")
+                if len(partes) > 1 and partes[1] == "FINALIZAR":
+
                     if datos.decode() != "115":
                         mensaje=crear_mensaje(datos.decode())
                     else:
                         mensaje=datos.decode()
 
-                    sock.sendto(mensaje.encode('utf-8'), (UDP_IP, UDP_PORT))
+                    sock.sendto(mensaje.encode('utf-8'), (host, PORT_2_3))
                 else:
                     s.close()
-                    sock.sendto(datos, (UDP_IP, UDP_PORT))
+                    sock.sendto(datos, (host, PORT_2_3))
                     sock.close()
                     flag=False
 

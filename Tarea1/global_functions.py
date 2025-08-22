@@ -59,6 +59,11 @@ def crear_mensaje(mensaje_recido):
     print(mensaje_nuevo)
     return mensaje_nuevo 
 
+def mensaje_final():
+    time = datetime.now()#hago el registo del tiempo
+    mensaje = f"{time}-Nicolas"
+    return mensaje
+
 def crear_Json(mensaje_actual):
     time=datetime.now()#hago el registo del tiempo
     mensaje_recido= re.split(r"-", mensaje_actual)

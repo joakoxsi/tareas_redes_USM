@@ -6,7 +6,7 @@ import socket
 import sys
 import re
 
-import global_functions
+#import global_functions
 
 # Variables globales para los hilos
 MESSAGE = ""
@@ -63,7 +63,7 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write("Mensaje recibido y procesado.".encode('utf-8'))
 
 #Cliente TCP: 
-def tcp_client_logic():
+def tcp_client():
     global MESSAGE, TERMINATE_SIGNAL
 
     # Bucle para enviar mensajes mientras no haya señal de finalización
@@ -80,7 +80,7 @@ def tcp_client_logic():
                 s.sendall(new_message.encode('utf-8'))
                 print(f"Mensaje enviado a Servicio 1: {new_message}")
             
-            # Limpiamos el mensaje para no enviarlo de nuevo en el próximo ciclo
+            # Se limpia mensaje para nuevo ciclo 
             MESSAGE = ""
     
     # Finalizacion
@@ -97,9 +97,10 @@ def tcp_client_logic():
         
         sys.exit(0) # Salimos del programa
 
+# Ejecucion principal
 def main():
-    # Creamos e iniciamos el hilo del cliente TCP
-    client_thread = threading.Thread(target=tcp_client_logic)
+    # Inicio hilo del cliente TCP
+    client_thread = threading.Thread(target=tcp_client)
     client_thread.start()
 
     # Creamos el servidor HTTP y lo dejamos escuchando

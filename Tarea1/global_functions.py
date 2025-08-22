@@ -72,4 +72,3 @@ def crear_Json(mensaje_actual):
     print(mensaje_json)
     return mensaje_json
     
-mensaje_inicials()

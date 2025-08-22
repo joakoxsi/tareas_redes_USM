@@ -11,6 +11,7 @@ flag=True
 UDP_IP = "127.0.0.1"
 UDP_PORT = 5005
 
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((host, port))
@@ -24,26 +25,29 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         datos=b""
         with conn:
             print('Conectado por', addr)
-            while  flag:
+            while True:
                 data = conn.recv(1024) #Recibir hasta 1024 bytes, OJO con el tamaño del mensaje
+  
                 if not data:
+
                     break
-                datos=+data
+
+                datos+=data
+
+                if datos.decode() != "935":
+                    if datos.decode() != "115":
+                        mensaje=crear_mensaje(datos.decode())
+                    else:
+                        mensaje=datos.decode()
+
+                    sock.sendto(mensaje.encode('utf-8'), (UDP_IP, UDP_PORT))
+                else:
+                    s.close()
+                    sock.sendto(datos, (UDP_IP, UDP_PORT))
+                    sock.close()
+                    flag=False
+
                 print("Mensaje recibido:", data.decode())
 
-            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            if datos.decode() != "935":
-                if datos.decode() != "115":
-                    mensaje=crear_mensaje(datos.decode())
-                else:
-                    mensaje=datos.decode()
-
-                
-                sock.sendto(mensaje.encode('utf-8'), (UDP_IP, UDP_PORT))
-            else:
-                s.close()
-                sock.sendto(datos, (UDP_IP, UDP_PORT))
-                sock.close()
-                flag=False
 
 print("Se cerro el servicio")

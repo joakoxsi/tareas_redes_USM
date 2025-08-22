@@ -13,20 +13,27 @@ servidor=  socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 servidor.bind((host,puerto))
 
 while flag:
-    data, addr =servidor.recvfrom(1024)
-    print(data)
+
+    datos=b""
+    while flag:
+        data=servidor.recvfrom(1024)
+
+        if not data:
+            break
+        datos+=data
+    print(datos)
     
     # CLiente TCP mandando a Servidor TCP
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host,puerto_tcp))
         
-        if data.decode() == "115":
-            mensaje="935"
+        if datos.decode() == "115":
+            mensaje="115"
         else:
-            mensaje=crear_mensaje(data.decode())
+            mensaje=crear_mensaje(datos.decode())
 
         s.sendall(mensaje.encode())
-        if data.decode() == "935":
+        if datos.decode() == "935":
             s.close()
             servidor.close()
             flag=False

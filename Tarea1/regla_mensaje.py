@@ -3,7 +3,7 @@ import re
 import json
 
 
-def mensaje_inicial():
+def mensaje_inicials():
     largo=str(input("Ingrese el largo min del mensaje: "))
     palabra=str(input("Ingrese la palabra inicial del mensaje: "))
     time=datetime.now()#hago el registo del tiempo
@@ -13,7 +13,8 @@ def mensaje_inicial():
 
 
 
-def crear_mensaje(palabra,mensaje_recido):
+def crear_mensaje(mensaje_recido):
+    palabra=str(input("Ingrese la palabra adicional: "))
     mensaje_recido= re.split(r"-", mensaje_recido) # separo el mensaje en base a los - que hay 
     texto=f"{mensaje_recido[5]} {palabra}" # tomo el texto anterior le añado un espacio y luego pongo la nueva palabra
     largo_actual= int(mensaje_recido[4])+1 #actualizo las palabras actuales
@@ -40,8 +41,4 @@ def crear_Json(mensaje_actual):
     
 
 
-
-mensaje = mensaje_inicial()
-
-json_data= crear_Json(mensaje)
 

@@ -71,5 +71,3 @@ def crear_Json(mensaje_actual):
     mensaje_json=json.dumps(datos)
     print(mensaje_json)
     return mensaje_json
-    
-mensaje_inicials()

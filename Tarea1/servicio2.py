@@ -1,6 +1,6 @@
 import socket
-import regla_mensaje
-from regla_mensaje import *
+
+from global_functions  import *
 
 # Configurar el host y puerto TCP
 host = "127.0.0.1"
@@ -21,28 +21,29 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     #Aceptar conexiones: espera hasta que alguien se conecte, devuelve el host y el port de la conexion
     while  flag: 
         conn, addr = s.accept() 
-        data=""
+        datos=b""
         with conn:
             print('Conectado por', addr)
             while  flag:
                 data = conn.recv(1024) #Recibir hasta 1024 bytes, OJO con el tamaño del mensaje
                 if not data:
                     break
+                datos=+data
                 print("Mensaje recibido:", data.decode())
 
-                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                if data.decode() != "935":
-                    if data.decode() != "115":
-                        mensaje=crear_mensaje(data.decode())
-                    else:
-                        mensaje=data.decode()
-
-                    
-                    sock.sendto(mensaje.encode('utf-8'), (UDP_IP, UDP_PORT))
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            if datos.decode() != "935":
+                if datos.decode() != "115":
+                    mensaje=crear_mensaje(datos.decode())
                 else:
-                    s.close()
-                    sock.sendto(data, (UDP_IP, UDP_PORT))
-                    sock.close()
-                    flag=False
+                    mensaje=datos.decode()
+
+                
+                sock.sendto(mensaje.encode('utf-8'), (UDP_IP, UDP_PORT))
+            else:
+                s.close()
+                sock.sendto(datos, (UDP_IP, UDP_PORT))
+                sock.close()
+                flag=False
 
 print("Se cerro el servicio")

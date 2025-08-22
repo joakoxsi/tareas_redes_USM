@@ -1,5 +1,5 @@
 import socket
-from regla_mensaje import *
+from global_functions import *
 
 host="127.0.0.1"
 puerto= 5005

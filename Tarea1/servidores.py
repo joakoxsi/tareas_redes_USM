@@ -2,7 +2,7 @@ import socket
 
 # Configurar el host y puerto TCP
 host = "127.0.0.1"
-port = 5000
+port = 5006
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((host, port))
@@ -15,9 +15,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
     with conn:
         print('Conectado por', addr)
+        datos=b""
         while True:
             data = conn.recv(1024) #Recibir hasta 1024 bytes, OJO con el tamaño del mensaje
             if not data:
                 break
-            print("Mensaje recibido:", data.decode())
+            datos+=data
+        print("Mensaje recibido:", datos.decode())
     

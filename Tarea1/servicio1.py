@@ -1,5 +1,5 @@
 import socket
-from regla_mensaje import *
+from global_functions import *
 
 host = "127.0.0.1"
 
@@ -26,28 +26,30 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
     #Aceptar conexiones: espera hasta que alguien se conecte, devuelve el host y el port de la conexion
     while flag: 
         conn, addr = s2.accept() 
-        data=""
         with conn:
             print('Conectado por', addr)
+            datos=b""
             while flag:
                 data = conn.recv(1024) #Recibir hasta 1024 bytes, OJO con el tamaño del mensaje
                 if not data:
                     break
-                print("Mensaje recibido:", data.decode())
-                print(data)
-                if data.decode() != "935":
-                    if data.decode() == "115":
-                        mensajes=mensaje_inicials()
+                datos+=data
 
-                    else:
-                        mensajes=crear_mensaje(data.decode())
+            print("Mensaje recibido:", datos.decode())
+            print(datos)
+            if datos.decode() != "935":
+                if datos.decode() == "115":
+                    mensajes=mensaje_inicials()
 
-                    cliente_tcp.sendall(mensajes.encode())
                 else:
-                    s2.close()
-                    cliente_tcp.sendall(data)
-                    cliente_tcp.close()
-                    flag=False
+                    mensajes=crear_mensaje(datos.decode())
+
+                cliente_tcp.sendall(mensajes.encode())
+            else:
+                s2.close()
+                cliente_tcp.sendall(datos)
+                cliente_tcp.close()
+                flag=False
 
 
 print("Se cerro el servicio")

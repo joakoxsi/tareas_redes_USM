@@ -4,7 +4,7 @@ from global_functions  import *
 
 # Configurar el host y puerto TCP
 host = "127.0.0.1"
-port = 5000
+TCP_PORT = 5000
 
 flag=True
 
@@ -14,7 +14,7 @@ UDP_PORT = 5005
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((host, port))
+    s.bind((host, TCP_PORT))
 
     #Escuchar conexiones: permitir conexiones entrantes
     s.listen()

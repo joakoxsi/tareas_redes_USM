@@ -19,11 +19,10 @@ host = "127.0.0.1"
 port_tcp = 5000
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.connect((host, port_tcp))
-    s.sendall(b"Hola, servidor TCP")
-    data = s.recv(1024)
+    mensaje="202".encode('utf-8')
+    s.sendall(mensaje)
 
-print(f"Respuesta del servidor: {data.decode()}")
+
 
 ####################################
 

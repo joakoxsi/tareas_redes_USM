@@ -3,7 +3,7 @@ import socket
 
 # Configurar el host y puerto
 host = "127.0.0.1"  # localhost
-port = 8000
+port = 5000
 
 # Crear el servidor
 server = HTTPServer((host, port), SimpleHTTPRequestHandler)

@@ -1,4 +1,3 @@
-from global_functions  import *
 import socket
 import threading
 import sys
@@ -30,7 +29,7 @@ def udp_server():
 
         while not flag:
             # Esperamos datos
-            data, addr = s.recvfrom(1024*100) 
+            data, addr = s.recvfrom(1024) 
             received_mensaje = data.decode('utf-8')
             print(f"Mensaje recibido por UDP: {received_mensaje}")
             
@@ -39,16 +38,26 @@ def udp_server():
             if received_mensaje == "115":
                 mensaje="115"
             else:
+                parts = received_mensaje.split('-')
+                
                 # Verificamos si es una señal de finalizacion
-                if  mensaje_finalizar in received_mensaje:
+                if len(parts) == 2 and mensaje_finalizar in received_mensaje:
                     print("Señal de finalización recibida. Propagando al siguiente servicio.")
                     TERMINATE_SIGNAL = True
                     break # Salimos del bucle
                 
-                # Componemos el nuevo string con el formato "[Timestamp]-[LargoMínimo]-[LargoActual]-[Mensaje]"
-                print("Procesando mensaje...")
-                mensaje = crear_mensaje(received_mensaje)
-                print(f"Mensaje procesado: {mensaje}")
+                # Si el formato es correcto, procesamos el mensaje
+                if len(parts) == 4:
+                    timestamp_str, min_length_str, current_length_str, mensaje_body = parts
+                    
+                    new_word = input("Ingresa una nueva palabra para el mensaje: ")
+                    
+                    # Agregamos la nueva palabra y actualizamos la longitud
+                    updated_mensaje_body = f"{mensaje_body} {new_word}" #revisar
+                    updated_length = len(updated_mensaje_body.split())
+                    
+                    # Componemos el nuevo string con el formato "[Timestamp]-[LargoMínimo]-[LargoActual]-[Mensaje]"
+                    mensaje = f"{timestamp_str}-{min_length_str}-{updated_length}-{updated_mensaje_body}"
                         
         s.close()
         sys.exit(0) # Salimos del programa
@@ -68,7 +77,6 @@ def http_client():
                 
                 # Preparar la solicitud HTTP POST
                 request_body = mensaje.encode('utf-8')
-                print(request_body)
                 request_headers = [
                     f"POST / HTTP/1.1",
                     f"Host: {host_local}:{PORT_3_4}",
@@ -92,7 +100,6 @@ def http_client():
 
             # Se limpia mensaje para nuevo ciclo 
             mensaje = ""
-            response=""
             
     # Finalizacion
     if flag:
@@ -110,9 +117,6 @@ def main():
     client_thread = threading.Thread(target=http_client)
     client_thread.start()
 
-
-    client_thread.join()
-    server_thread.join()
     print("Servicio 3 finalizado.")
 
 if __name__ == "__main__":

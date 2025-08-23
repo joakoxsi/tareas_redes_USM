@@ -1,13 +1,13 @@
-from global_functions import *
+from global_functions  import *
 import http.server
 import socketserver
 import threading
-from datetime import datetime 
+import datetime
 import socket
 import sys
 import re
 
-import global_functions
+#import global_functions
 
 # Variables globales para los hilos
 mensaje = ""
@@ -29,27 +29,29 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
         print(f"Mensaje recibido por HTTP: {post_data}")
 
         # Separamos las partes del mensaje
-        mensaje = ""
+
         if  post_data == "115" :
             mensaje = "115"
 
         else:
             parts = post_data.split('-')
             # Se valida el formato "[Timestamp]-[LargoMínimo]-[LargoActual]-[Mensaje]"
-            if len(parts) == 6:
-                timestamp_str = datetime.now()
-                largo_minimo = int(parts[3])
-                largo_actual = int(parts[4])
-                mensaje_body = parts[5]
+            if len(parts) == 4:
+                timestamp_str = parts[0]
+                largo_minimo = int(parts[1])
+                largo_actual = int(parts[2])
+                mensaje_body = parts[3]
             
                 # Preparamos el mensaje para la siguiente iteración
+                mensaje = mensaje_body
+                    
                 # Lógica para verificar el largo del mensaje
                 if largo_actual >= largo_minimo:
                     # Si el largo excedio el minimo, guardamos el archivo y activamos la señal de finalización
                     print("El mensaje ha alcanzado la longitud mínima. Finalizando la cadena.")
-                    nombre_archivo = f"mensaje_final.txt"
+                    file = f"mensaje_final_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.txt"
                     
-                    with open(nombre_archivo, "w", encoding="utf-8") as file:
+                    with open(file, "w", encoding="utf-8") as file:
                         file.write(f"{timestamp_str}-{largo_minimo}-{largo_actual}-{mensaje_body}")
                     
                     flag = True
@@ -82,13 +84,13 @@ def tcp_client():
                 print(f"Conectado a {host}:{PORT_4_1}")
                 tcp_socket.sendall(mensaje.encode('utf-8'))
                 print(f"Mensaje enviado a Servicio 1: {mensaje}")
-                print(1)
             else:
+                new_mensaje = f"{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}-{largo_minimo}-{len(mensaje.split())}-{mensaje}"
                 
                 # Envio mensaje servicio 1
-                tcp_socket.sendall(mensaje.encode('utf-8'))
-                print(f"Mensaje enviado a Servicio 1: {mensaje}")
-                print(2)
+                tcp_socket.sendall(new_mensaje.encode('utf-8'))
+                print(f"Mensaje enviado a Servicio 1: {new_mensaje}")
+                
         # Se limpia mensaje para nuevo ciclo 
         mensaje = ""
     
@@ -97,7 +99,7 @@ def tcp_client():
         print("Finalizando conexiones y saliendo...")
 
         # Enviamos la señal de finalizacion al Servicio 1
-        mensaje_final = f"{datetime.now()}-FINALIZAR"
+        mensaje_final = f"{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}-FINALIZAR"
 
         tcp_socket.sendall(mensaje_final.encode('utf-8'))
         print("Señal de finalización enviada al Servicio 1.")

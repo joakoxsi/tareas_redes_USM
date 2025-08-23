@@ -30,29 +30,25 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
             print('Conectado por', addr)
             datos=b""
             while flag:
-                data = conn.recv(1024) #Recibir hasta 1024 bytes, OJO con el tamaño del mensaje
+                data = conn.recv(1024*100) #Recibir hasta 1024 bytes, OJO con el tamaño del mensaje
                 if not data:
                     break
                 datos+=data
-
+                print("Mensaje recibido:", datos.decode())
                 if datos.decode() == "115":
                     mensajes=mensaje_inicials()
                     cliente_tcp.sendall(mensajes.encode())
                 # Lógica de Finalización
                 else:
                     partes = datos.decode().split("-")
-                    if len(partes) > 1 and partes[1] == "FINALIZAR":
-                        s2.close()
+                    if partes[len(partes)-1] == "FINALIZAR":
                         cliente_tcp.sendall(datos)
-                        cliente_tcp.close()
                         flag=False
+                        break
                         
                     else:
                         mensajes=crear_mensaje(datos.decode())
-
                         cliente_tcp.sendall(mensajes.encode())
-                        
-                        
-
-
-print("Se cerro el servicio")
+    
+    cliente_tcp.close()
+    print("Se cerró el servicio")

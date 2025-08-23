@@ -56,7 +56,6 @@ def crear_mensaje(mensaje_recido):
     largo_actual= int(mensaje_recido[4])+1 #actualizo las palabras actuales
     time=datetime.now()#hago el registo del tiempo
     mensaje_nuevo=f"{time}-{mensaje_recido[3]}-{largo_actual}-{texto}" #concateno todo para obtener el mensaje final 
-    print(mensaje_nuevo)
     return mensaje_nuevo 
 
 def mensaje_final():

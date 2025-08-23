@@ -24,32 +24,30 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         with conn:
             print('Conectado por', addr)
             while True:
-                data = conn.recv(1024) #Recibir hasta 1024 bytes, OJO con el tamaño del mensa
+                data = conn.recv(1024*100) #Recibir hasta 1024 bytes, OJO con el tamaño del mensa
                 if not data:
                     break
 
                 datos+=data
-
+                print("Mensaje recibido:", data.decode())
                 if datos.decode() != "115":
                     mensaje=crear_mensaje(datos.decode())
-                    sock.sendall(mensaje.encode())
+                    sock.sendto(mensaje.encode(), (host, PORT_2_3))
 
                 # Lógica de Finalización
                 partes = datos.decode().split("-")
-                if len(partes) > 1 and partes[1] == "FINALIZAR":
+                if partes[-1] == "FINALIZAR":
 
-                    s.close()
-                    sock.sendto(datos, (host, PORT_2_3))
-                    sock.close()
+                    sock.sendto(datos, (host, PORT_2_3))   
                     flag=False
+                    break
 
                 else:
                     mensaje=datos.decode()
-
                     sock.sendto(mensaje.encode('utf-8'), (host, PORT_2_3))
-                    
 
-                print("Mensaje recibido:", data.decode())
+        if not flag:
+            break 
 
-
-print("Se cerro el servicio")
+sock.close()
+print("Se cerró el servicio")

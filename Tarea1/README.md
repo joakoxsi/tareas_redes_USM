@@ -15,8 +15,4 @@ Joaquin Rojo 202157550-k
 * Python 3.12.6
 
 ### Ejecución:
-Si es ejecutado en Windows:
 > laboratorio1.bat
-
-Si es ejecutado en GNU/Linux:
-> ./laboratorio1.sh

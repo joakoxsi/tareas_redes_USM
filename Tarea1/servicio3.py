@@ -42,7 +42,7 @@ def udp_server():
                 # Verificamos si es una señal de finalizacion
                 if  mensaje_finalizar in received_mensaje:
                     print("Señal de finalización recibida. Propagando al siguiente servicio.")
-                    TERMINATE_SIGNAL = True
+                    flag = True
                     break # Salimos del bucle
                 
                 # Componemos el nuevo string con el formato "[Timestamp]-[LargoMínimo]-[LargoActual]-[Mensaje]"

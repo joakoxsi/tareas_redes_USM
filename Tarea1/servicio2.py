@@ -28,7 +28,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 # Lógica de Finalización
                 partes = data.decode().split("-")
                 if partes[-1] == "FINALIZAR":
-                    print("aaaaaaaaaaaaaaaaaaaaaaaaaaa")
                     sock.sendto(data, (host, PORT_2_3))   
                     flag=False
                     break

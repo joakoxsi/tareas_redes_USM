@@ -17,7 +17,6 @@ PORT_2_3 = 5005
 PORT_3_4 = 8080
 
 mensaje_finalizar = "FINALIZAR"
-flag=True
 
 # Servidor UDP
 def udp_server():
@@ -34,17 +33,18 @@ def udp_server():
             received_mensaje = data.decode('utf-8')
             print(f"Mensaje recibido por UDP: {received_mensaje}")
             
-            # Verificamos si es una señal de finalizacion
-            if len(parts) == 2 and mensaje_finalizar in received_mensaje:
-                print("Señal de finalización recibida. Propagando al siguiente servicio.")
-                TERMINATE_SIGNAL = True
-                break # Salimos del bucle
             
             # Separamos las partes del mensaje
             if received_mensaje == "115":
                 mensaje="115"
             else:
                 parts = received_mensaje.split('-')
+                
+                # Verificamos si es una señal de finalizacion
+                if len(parts) == 2 and mensaje_finalizar in received_mensaje:
+                    print("Señal de finalización recibida. Propagando al siguiente servicio.")
+                    TERMINATE_SIGNAL = True
+                    break # Salimos del bucle
                 
                 # Si el formato es correcto, procesamos el mensaje
                 if len(parts) == 4:
@@ -53,14 +53,14 @@ def udp_server():
                     new_word = input("Ingresa una nueva palabra para el mensaje: ")
                     
                     # Agregamos la nueva palabra y actualizamos la longitud
-                    updated_mensaje_body = f"{mensaje_body} {new_word}"
+                    updated_mensaje_body = f"{mensaje_body} {new_word}" #revisar
                     updated_length = len(updated_mensaje_body.split())
                     
                     # Componemos el nuevo string con el formato "[Timestamp]-[LargoMínimo]-[LargoActual]-[Mensaje]"
                     mensaje = f"{timestamp_str}-{min_length_str}-{updated_length}-{updated_mensaje_body}"
                         
-            s.close()
-            sys.exit(0) # Salimos del programa
+        s.close()
+        sys.exit(0) # Salimos del programa
 
 # Cliente HTTP
 def http_client():
@@ -110,17 +110,13 @@ def http_client():
 
 # Ejecucion principal
 def main():
-    # Creamos e iniciamos los hilos para el servidor UDP y el cliente HTTP
+    # Hilos para el servidor UDP y el cliente HTTP
     server_thread = threading.Thread(target=udp_server)
     server_thread.start()
 
     client_thread = threading.Thread(target=http_client)
     client_thread.start()
 
-    # Mantenemos el hilo principal vivo esperando a que los otros terminen
-    server_thread.join()
-    client_thread.join()
-    
     print("Servicio 3 finalizado.")
 
 if __name__ == "__main__":

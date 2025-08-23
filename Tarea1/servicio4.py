@@ -31,6 +31,7 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
 
         if  post_data == "115" :
             mensaje = "115"
+
         else:
             parts = post_data.split('-')
             # Se valida el formato "[Timestamp]-[LargoMínimo]-[LargoActual]-[Mensaje]"
@@ -68,17 +69,19 @@ class HTTPServerHandler(http.server.BaseHTTPRequestHandler):
 #Cliente TCP: 
 def tcp_client():
     global mensaje, flag
-    # Creamos el socket y nos conectamos al Servicio 1
+    # Creamos el socket 
     tcp_socket =socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_socket.connect((host, PORT_4_1))
-    print(f"Conectado a {host}:{PORT_4_1}")
                     
     # Bucle para enviar mensajes mientras no haya señal de finalización
     while not flag:
         # Esperamos a que el servidor HTTP haya procesado un mensaje
         if mensaje != "":
             # Creamos el nuevo mensaje con el formato solicitado
+            print(115)
             if mensaje == "115":
+                # Nos conectamos al Servicio 1
+                tcp_socket.connect((host, PORT_4_1))
+                print(f"Conectado a {host}:{PORT_4_1}")
                 tcp_socket.sendall(mensaje.encode('utf-8'))
                 print(f"Mensaje enviado a Servicio 1: {mensaje}")
             else:
@@ -88,8 +91,8 @@ def tcp_client():
                 tcp_socket.sendall(new_mensaje.encode('utf-8'))
                 print(f"Mensaje enviado a Servicio 1: {new_mensaje}")
                 
-                # Se limpia mensaje para nuevo ciclo 
-                mensaje = ""
+        # Se limpia mensaje para nuevo ciclo 
+        mensaje = ""
     
     # Finalizacion
     if flag:
@@ -106,7 +109,7 @@ def tcp_client():
 # Ejecucion principal
 def main():
     # Inicio hilo del cliente TCP
-    client_thread = threading.Thread(target=tcp_client)
+    client_thread = threading.Thread(target=tcp_client) 
     client_thread.start()
 
     # Creamos el servidor HTTP y lo dejamos escuchando

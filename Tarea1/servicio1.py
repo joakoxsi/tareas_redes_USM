@@ -35,25 +35,24 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s2:
                     break
                 datos+=data
 
-            print("Mensaje recibido:", datos.decode())
-            print(datos)
-
-            # Lógica de Finalización
-            partes = datos.decode().split("-")
-            if len(partes) > 1 and partes[1] == "FINALIZAR":
-
                 if datos.decode() == "115":
                     mensajes=mensaje_inicials()
-
+                    cliente_tcp.sendall(mensajes.encode())
+                # Lógica de Finalización
                 else:
-                    mensajes=crear_mensaje(datos.decode())
+                    partes = datos.decode().split("-")
+                    if len(partes) > 1 and partes[1] == "FINALIZAR":
+                        s2.close()
+                        cliente_tcp.sendall(datos)
+                        cliente_tcp.close()
+                        flag=False
+                        
+                    else:
+                        mensajes=crear_mensaje(datos.decode())
 
-                cliente_tcp.sendall(mensajes.encode())
-            else:
-                s2.close()
-                cliente_tcp.sendall(datos)
-                cliente_tcp.close()
-                flag=False
+                        cliente_tcp.sendall(mensajes.encode())
+                        
+                        
 
 
 print("Se cerro el servicio")

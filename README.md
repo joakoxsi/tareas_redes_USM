@@ -10,8 +10,9 @@
 
 ### Ejecución:
 Debe conectarse a la red correspondiente del laboratorio, junto con los puertos y direcciones dadas. Se debe ejcutar cada archivo por separado.
-``shell
-cliente1.py
-cliente2.py
-cliente3.py
-``
+
+```shell
+python3 cliente1.py  
+python3 cliente2.py  
+python3 cliente3.py  
+```

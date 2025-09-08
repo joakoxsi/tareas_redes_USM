@@ -1,34 +1,59 @@
-import socket
-import os 
+import os, json, socket, re
 
-################### Cliente UDP ###################
+IP_SERVER = "jdiaz.lat"
+PORT = 50005
 
-IP="1"
-PUERTO_UDP=1
-comando=["JOKE","EXIT"]
+#expresion = re.compile(r"(.+,.+,.+)")
 
+#Creacion del socket UDP
+socketUDP=socket.socket(socket.AF_INET,socket.SOCK_DGRAM) 
+socketUDP.connect((IP_SERVER,PORT))
 
-socketUDP=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-socketUDP.connect((IP,PUERTO_UDP))
+#conexion con server UDP
 
-while True:
-    texto= input("Ingrese el texto a enviar: ")
-    
-    if texto in comando:
+mensaje = "Hola mundo desde grupo 14"
+socketUDP.send(mensaje.encode())
 
-        if texto=="EXIT":
-            print("Cerrando conexion")
-            socketUDP.close()
-            break
-        
-        elif texto=="JOKE":
-            print("logica")
-            bormita = "¿Por qué los programadores confunden Halloween con Navidad? Porque OCT 31 = DEC 25."
-            socketUDP.send(bormita.encode())
-            datos=socketUDP.recv(1024)
-            print("Recibido: ",datos.decode())        
+datos = socketUDP.recv(1024)
+datos = datos.decode()
+datos = datos[1:-1] #saca los primeros corchetes
+print(datos)
+
+lista_datos = datos.strip().split(";")
+print(lista_datos)    
+
+socketUDP.close()
+
+imagen = b""
+
+#trbajar los nodos
+for info_nodo in lista_datos:
+    info_nodo = info_nodo[1:-1]
+    print(info_nodo)
+    lista_info_nodo = info_nodo.split(",")
+    print(lista_info_nodo) 
+
+    (url, puerto, protocolo, codigo) = lista_info_nodo
+    print(f"url: {url}, puerto: {puerto}, protocolo: {protocolo}, codigo: {codigo}")
+
+    if protocolo == "TCP":
+        with socket.socket(socket.AF_INET,socket.SOCK_STREAM) as s:
+            print(protocolo,(url,int(puerto)))
+            s.connect((url,int(puerto)))
+            s.sendall(f"14,{codigo}".encode())
+            print(protocolo,(url,int(puerto)))
+            data=s.recv(4096)
+            imagen += data
+
     else:
-        print("¡¡Texto no reconocido!!") 
+        print(protocolo)
+        with socket.socket(socket.AF_INET,socket.SOCK_DGRAM) as s:
+            s.bind((url,int(puerto)))  
+            s.send(f"14, {codigo}".encode()) 
+            data=s.recv(4096)
+            imagen+= data
 
-    
-print("¡¡Final: esto es cine!!")
+print(imagen)
+
+with open("resultado.bin", 'wb') as archivo:
+    archivo.write(imagen)

@@ -1,10 +1,11 @@
-import re,socket,asyncio,os,json
+import socket
 
 ################### Cliente UDP ###################
 
 IP="192.168.1.179"
 PUERTO_UDP=9001
 comando=["JOKE","EXIT"]
+
 
 socketUDP=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 socketUDP.connect((IP,PUERTO_UDP))
@@ -20,7 +21,9 @@ while True:
             break
         
         elif texto=="JOKE":
-            socketUDP.send(texto.encode())
+            print("logica")
+            bormita = "¿Por qué los programadores confunden Halloween con Navidad? Porque OCT 31 = DEC 25."
+            socketUDP.send(bormita.encode())
             datos=socketUDP.recv(1024)
             print("Recibido: ",datos.decode())        
     else:
@@ -28,5 +31,3 @@ while True:
 
     
 print("¡¡Final: esto es cine!!")
-
-

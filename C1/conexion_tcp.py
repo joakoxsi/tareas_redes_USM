@@ -19,15 +19,10 @@ while True:
             socketTCP.close() #Cierre del socket
             break
         
-        elif texto=="GET":
-            socketTCP.send(texto.encode()) #Envio del comando GET
+        elif texto=="GET" or texto=="JOKE":
+            socketTCP.send(texto.encode()) #Envio del comando GET o JOKE
             datos=socketTCP.recv(1024) #Recepcion de datos (max 1024 bytes)
-            print("Recibido: ",datos.decode()) #Impresion de los datos recibidos
-
-        elif texto=="JOKE":
-            socketTCP.send(texto.encode())
-            datos=socketTCP.recv(1024)
-            print("Recibido: ",datos.decode())    
+            print("Recibido: ",datos.decode()) #Impresion de los datos recibidos 
     else:
         print("¡¡Texto no reconocido!!") 
 

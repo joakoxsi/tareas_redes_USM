@@ -20,9 +20,10 @@ while True:
             break
         
         elif texto=="JOKE":
-            socketUDP.send(texto.encode()) #Envio del comando JOKE
-            datos=socketUDP.recv(1024) #Recepcion de datos (max 1024 bytes)
-            print("Recibido: ",datos.decode()) #Impresion de los datos recibidos   
+            bromita = "¿Por qué los programadores confunden Halloween con Navidad? Porque OCT 31 = DEC 25."
+            socketUDP.send(bromita.encode()) #Envio del mensaje al servidor
+            datos=socketUDP.recv(1024) #Recepcion de la respuesta del servidor
+            print("Recibido: ",datos.decode()) #Impresion de la respuesta
     else:
         print("¡¡Texto no reconocido!!") 
 
